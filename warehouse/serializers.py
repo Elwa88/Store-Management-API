@@ -21,7 +21,7 @@ class StockSerializer(serializers.ModelSerializer):
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = ['id', 'name', 'description', 'buying_date', 'price_bought','price_selling','serial_number','item_code']
+        fields = ['id', 'name','category', 'description', 'buying_date', 'price_bought','price_selling','serial_number','item_code']
 
     def create(self, validated_data):
         stock, created = Stock.objects.get_or_create(product_name = validated_data['name']) 

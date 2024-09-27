@@ -26,3 +26,7 @@ class ProductViews(generics.ListCreateAPIView):
     serializer_class = ProductSerializer
     permission_classes = [IsAdminOrReadOnly]
 
+class ReportViews(generics.ListCreateAPIView):
+    queryset = buying_report.objects.all()
+    serializer_class = ReportSerializer
+    permission_classes = [IsAdmin]

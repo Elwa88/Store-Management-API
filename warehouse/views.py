@@ -1,4 +1,5 @@
 from rest_framework import generics
+from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import Category, Product, Supplier, Stock, buying_report
 from .serializers import CategorySerializer, ProductSerializer, SupplierSerializer, StockSerializer, ReportSerializer
@@ -55,3 +56,17 @@ class ReportRetrieve(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ReportSerializer
     permission_classes = [IsAdmin]
 
+
+class Restock(APIView):
+    def get(self, request, category_name, stock_quantity, *args, **kwargs):
+        category = Category.objects.get(name = category_name)
+
+        if category.subcategories.exists():
+            return Response({"message" : "plaese enter only non-parent category"})  
+         
+        else:
+            products = Stock.objects.filter(product_name__icontains=category_name, quantity__lt = stock_quantity)
+            supplier = Supplier.objects.filter(product_name = category_name).order_by('-rating')[:1]
+            for product in products:
+                return Response({"message":f"ordered {5 - product.quantity} {product.product_name} from {supplier[0].name}"})
+            

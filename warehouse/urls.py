@@ -13,4 +13,5 @@ urlpatterns = [
     path('product/<int:pk>/',ProductRetrieve.as_view()),
     path('report/',ReportListCreate.as_view()),
     path('report/<int:pk>/',ReportRetrieve.as_view()),
+    path('restock/<str:category_name>/<int:stock_quantity>/',Restock.as_view())
 ]

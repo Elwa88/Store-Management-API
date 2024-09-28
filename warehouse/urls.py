@@ -7,4 +7,5 @@ urlpatterns = [
     path('supplier/',SupplierViews.as_view()),
     path('stock/',ListStock.as_view()),
     path('product/',ProductViews.as_view()),
+    path('report/',ReportViews.as_view()),
 ]

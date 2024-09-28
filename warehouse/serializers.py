@@ -48,8 +48,7 @@ class ReportSerializer(serializers.ModelSerializer):
             grade = -validated_data['grade']
         else:
             grade = validated_data['grade']
-        
         supplier.rating += grade
-        supplier.save
+        supplier.save()
 
         return report

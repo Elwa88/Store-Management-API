@@ -3,9 +3,14 @@ from .views import *
 
 
 urlpatterns = [
-    path('category/',CategoryViews.as_view()),
-    path('supplier/',SupplierViews.as_view()),
-    path('stock/',ListStock.as_view()),
-    path('product/',ProductViews.as_view()),
-    path('report/',ReportViews.as_view()),
+    path('category/',CategoriesListCreate.as_view()),
+    path('category/<int:pk>/',CategoryRetrieve.as_view()),
+    path('supplier/',SuppliersListCreate.as_view()),
+    path('supplier/<int:pk>/',SupplierRetrieve.as_view()),
+    path('stock/',StockList.as_view()),
+    path('stock/<int:pk>/',StockRetrieve.as_view()),
+    path('product/',ProductsListCreate.as_view()),
+    path('product/<int:pk>/',ProductRetrieve.as_view()),
+    path('report/',ReportListCreate.as_view()),
+    path('report/<int:pk>/',ReportRetrieve.as_view()),
 ]

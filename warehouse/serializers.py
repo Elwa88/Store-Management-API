@@ -52,3 +52,5 @@ class ReportSerializer(serializers.ModelSerializer):
         supplier.save()
 
         return report
+    
+    

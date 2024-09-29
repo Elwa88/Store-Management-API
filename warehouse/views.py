@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from .models import Category, Product, Supplier, Stock, Feedback
 from .serializers import CategorySerializer, ProductSerializer, SupplierSerializer, StockSerializer, FeedbackSerializer, GenerateReportSerializer
 from userauth.permissions import IsAdmin, IsAdminOrReadOnly, IsManager
-
+from .filters import ProductFilter, StockFilter, SupplierFilter
 
 class CategoriesListCreate(generics.ListCreateAPIView):
     queryset = Category.objects.all()
@@ -20,6 +20,7 @@ class SuppliersListCreate(generics.ListCreateAPIView):
     queryset = Supplier.objects.all()
     serializer_class = SupplierSerializer
     permission_classes = [IsAdmin]
+    filterset_class = SupplierFilter
 
 class SupplierRetrieve(generics.RetrieveUpdateDestroyAPIView):
     queryset = Supplier.objects.all()
@@ -30,6 +31,7 @@ class StockList(generics.ListAPIView):
     queryset = Stock.objects.all()
     serializer_class = StockSerializer
     permission_classes = [IsManager]
+    filterset_class = StockFilter
 
 class StockRetrieve(generics.RetrieveUpdateDestroyAPIView):
     queryset = Stock.objects.all()
@@ -40,6 +42,7 @@ class ProductsListCreate(generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     permission_classes = [IsAdminOrReadOnly]
+    filterset_class = ProductFilter
 
 class ProductRetrieve(generics.RetrieveUpdateDestroyAPIView):
     queryset = Product.objects.all()

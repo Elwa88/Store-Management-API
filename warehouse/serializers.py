@@ -32,7 +32,7 @@ class ProductSerializer(serializers.ModelSerializer):
         return product
     
 
-class ReportSerializer(serializers.ModelSerializer):
+class FeedbackSerializer(serializers.ModelSerializer):
 
     product = serializers.PrimaryKeyRelatedField(queryset = Product.objects.all())
     supplier = serializers.PrimaryKeyRelatedField(queryset = Supplier.objects.all())

@@ -2,7 +2,7 @@ from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import Category, Product, Supplier, Stock, Feedback
-from .serializers import CategorySerializer, ProductSerializer, SupplierSerializer, StockSerializer, ReportSerializer, GenerateReportSerializer
+from .serializers import CategorySerializer, ProductSerializer, SupplierSerializer, StockSerializer, FeedbackSerializer, GenerateReportSerializer
 from userauth.permissions import IsAdmin, IsAdminOrReadOnly, IsManager
 
 
@@ -48,12 +48,12 @@ class ProductRetrieve(generics.RetrieveUpdateDestroyAPIView):
 
 class FeedbackListCreate(generics.ListCreateAPIView):
     queryset = Feedback.objects.all()
-    serializer_class = ReportSerializer
+    serializer_class = FeedbackSerializer
     permission_classes = [IsAdmin]
 
 class FeedbackRetrieve(generics.RetrieveUpdateDestroyAPIView):
     queryset = Feedback.objects.all()
-    serializer_class = ReportSerializer
+    serializer_class = FeedbackSerializer
     permission_classes = [IsAdmin]
 
 
@@ -79,6 +79,9 @@ class Report(APIView):
             start_date =serializer.validated_data.get('start_date')
             end_date = serializer.validated_data.get('end_date')
             category = serializer.validated_data.get('category')
+            if category.subcategories.exists():
+                return Response({"message":"Enter only non-parent category"})
+            
             products = Product.objects.filter(buying_date__range =(start_date, end_date), category = category)
             total = 0
             response = ''

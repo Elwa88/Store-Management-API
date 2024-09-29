@@ -1,9 +1,9 @@
 from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .models import Category, Product, Supplier, Stock, BuyingReport
-from .serializers import CategorySerializer, ProductSerializer, SupplierSerializer, StockSerializer, ReportSerializer
-from userauth.permissions import IsAdmin, IsAdminOrReadOnly, IsManager, IsSalesperson
+from .models import Category, Product, Supplier, Stock, Feedback
+from .serializers import CategorySerializer, ProductSerializer, SupplierSerializer, StockSerializer, ReportSerializer, GenerateReportSerializer
+from userauth.permissions import IsAdmin, IsAdminOrReadOnly, IsManager
 
 
 class CategoriesListCreate(generics.ListCreateAPIView):
@@ -46,13 +46,13 @@ class ProductRetrieve(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ProductSerializer
     permission_classes = [IsAdminOrReadOnly]
 
-class ReportListCreate(generics.ListCreateAPIView):
-    queryset = BuyingReport.objects.all()
+class FeedbackListCreate(generics.ListCreateAPIView):
+    queryset = Feedback.objects.all()
     serializer_class = ReportSerializer
     permission_classes = [IsAdmin]
 
-class ReportRetrieve(generics.RetrieveUpdateDestroyAPIView):
-    queryset = BuyingReport.objects.all()
+class FeedbackRetrieve(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Feedback.objects.all()
     serializer_class = ReportSerializer
     permission_classes = [IsAdmin]
 
@@ -69,4 +69,23 @@ class Restock(APIView):
             supplier = Supplier.objects.filter(product_name = category_name).order_by('-rating')[:1]
             for product in products:
                 return Response({"message":f"ordered {5 - product.quantity} {product.product_name} from {supplier[0].name}"})
-            
+
+class Report(APIView):
+    permission_classes = [IsAdmin]
+
+    def post(self,request,*args, **kwargs):
+        serializer = GenerateReportSerializer(data = request.data)
+        if serializer.is_valid():
+            start_date =serializer.validated_data.get('start_date')
+            end_date = serializer.validated_data.get('end_date')
+            category = serializer.validated_data.get('category')
+            products = Product.objects.filter(buying_date__range =(start_date, end_date), category = category)
+            total = 0
+            response = ''
+            for product in products.all():
+                response += f"{product.name} -- {product.price_bought}$ -- {product.item_code} || "
+                total += product.price_bought
+            return Response({'report' : f'{response}total = {total}$'})
+
+        else:
+            return Response({"message":"Enter valid input. Category - Primary key. Start_date, End_date - YYYY-MM-DD"})

@@ -41,7 +41,7 @@ class Stock(models.Model):
         return f'{self.product_name} quantity : {self.quantity}'
 
 
-class BuyingReport(models.Model):
+class Feedback(models.Model):
     SATISFACTION_CHOICES = [('satisfied', 'Satisfied'),
                             ('neutral', 'Neutral'),
                             ('dissatisfied', 'Dissatisfied')]

@@ -11,7 +11,8 @@ urlpatterns = [
     path('stock/<int:pk>/',StockRetrieve.as_view()),
     path('product/',ProductsListCreate.as_view()),
     path('product/<int:pk>/',ProductRetrieve.as_view()),
-    path('report/',ReportListCreate.as_view()),
-    path('report/<int:pk>/',ReportRetrieve.as_view()),
-    path('restock/<str:category_name>/<int:stock_quantity>/',Restock.as_view())
+    path('feedback/',FeedbackListCreate.as_view()),
+    path('feedback/<int:pk>/',FeedbackRetrieve.as_view()),
+    path('restock/<str:category_name>/<int:stock_quantity>/',Restock.as_view()),
+    path('generate_report/', Report.as_view())
 ]

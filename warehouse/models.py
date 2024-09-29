@@ -41,7 +41,7 @@ class Stock(models.Model):
         return f'{self.product_name} quantity : {self.quantity}'
 
 
-class buying_report(models.Model):
+class BuyingReport(models.Model):
     SATISFACTION_CHOICES = [('satisfied', 'Satisfied'),
                             ('neutral', 'Neutral'),
                             ('dissatisfied', 'Dissatisfied')]
@@ -53,3 +53,8 @@ class buying_report(models.Model):
     supplier = models.ForeignKey(Supplier, on_delete= models.CASCADE)
     satisfaction = models.CharField(max_length=12, choices=SATISFACTION_CHOICES)
     grade = models.PositiveIntegerField(choices=GRADES)
+
+class GenerateReport(models.Model):
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    start_date = models.DateField()
+    end_date = models.DateField()

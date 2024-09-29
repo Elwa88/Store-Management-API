@@ -1,7 +1,7 @@
 from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .models import Category, Product, Supplier, Stock, buying_report
+from .models import Category, Product, Supplier, Stock, BuyingReport
 from .serializers import CategorySerializer, ProductSerializer, SupplierSerializer, StockSerializer, ReportSerializer
 from userauth.permissions import IsAdmin, IsAdminOrReadOnly, IsManager, IsSalesperson
 
@@ -47,12 +47,12 @@ class ProductRetrieve(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAdminOrReadOnly]
 
 class ReportListCreate(generics.ListCreateAPIView):
-    queryset = buying_report.objects.all()
+    queryset = BuyingReport.objects.all()
     serializer_class = ReportSerializer
     permission_classes = [IsAdmin]
 
 class ReportRetrieve(generics.RetrieveUpdateDestroyAPIView):
-    queryset = buying_report.objects.all()
+    queryset = BuyingReport.objects.all()
     serializer_class = ReportSerializer
     permission_classes = [IsAdmin]
 

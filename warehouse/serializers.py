@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Product, Category, Supplier, Stock, buying_report
+from .models import Product, Category, Supplier, Stock, BuyingReport, GenerateReport
 
 class CategorySerializer(serializers.ModelSerializer):
     subcategories = serializers.PrimaryKeyRelatedField(many = True, read_only = True)
@@ -38,11 +38,11 @@ class ReportSerializer(serializers.ModelSerializer):
     supplier = serializers.PrimaryKeyRelatedField(queryset = Supplier.objects.all())
 
     class Meta:
-        model = buying_report
+        model = BuyingReport
         fields = '__all__'
 
     def create(self, validated_data):
-        report = buying_report.objects.create(**validated_data)
+        report = BuyingReport.objects.create(**validated_data)
         supplier = validated_data['supplier']
         if validated_data['satisfaction'] == 'dissatisfied':
             grade = -validated_data['grade']
@@ -52,5 +52,4 @@ class ReportSerializer(serializers.ModelSerializer):
         supplier.save()
 
         return report
-    
     

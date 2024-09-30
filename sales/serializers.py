@@ -36,4 +36,4 @@ class SaleSerializer(serializers.ModelSerializer):
 class ReportSerializer(serializers.ModelSerializer):
     class Meta:
         model = GenerateReport
-        fields = ['id','sale', 'start_date', 'end_date']
+        fields = ['id', 'start_date', 'end_date']

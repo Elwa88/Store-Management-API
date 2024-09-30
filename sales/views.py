@@ -9,7 +9,7 @@ class SaleListCreate(generics.ListCreateAPIView):
     serializer_class = SaleSerializer
     permission_classes = [IsSalesperson]
 
-class SaleRetrieve(generics.ListCreateAPIView):
+class SaleRetrieve(generics.RetrieveUpdateDestroyAPIView):
     queryset = Sale.objects.all()
     serializer_class = SaleSerializer
     permission_classes = [IsAdminOrReadOnly]

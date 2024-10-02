@@ -4,12 +4,13 @@ from rest_framework.views import APIView
 from .models import Sale
 from .serializers import SaleSerializer, ReportSerializer
 from userauth.permissions import IsAdminOrReadOnly, IsSalesperson, IsManager
-
+from .filters import SaleFilter
 
 class SaleListCreate(generics.ListCreateAPIView):
     queryset = Sale.objects.all()
     serializer_class = SaleSerializer
     permission_classes = [IsSalesperson]
+    filterset_class = SaleFilter
 
 class SaleRetrieve(generics.RetrieveUpdateDestroyAPIView):
     queryset = Sale.objects.all()

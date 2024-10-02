@@ -87,11 +87,20 @@ class Report(APIView):
             
             products = Product.objects.filter(buying_date__range =(start_date, end_date), category = category)
             total = 0
-            response = ''
+            product_list = []
             for product in products.all():
-                response += f"{product.name} -- {product.price_bought}$ -- {product.item_code} || "
+                product_info = {
+                    "name": product.name,
+                    "price_bought": product.price_bought,
+                    "item_code": product.item_code
+                }
+                product_list.append(product_info)
                 total += product.price_bought
-            return Response({'report' : f'{response}total = {total}$'})
+            return Response({
+                'products': product_list,
+                'total price': f'{total}$'
+            })
+
 
         else:
             return Response({"message":"Enter valid input. Category - Primary key. Start_date, End_date - YYYY-MM-DD"})

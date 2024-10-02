@@ -2,9 +2,8 @@ from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .models import Sale, GenerateReport
-from warehouse.models import Product
 from .serializers import SaleSerializer, ReportSerializer
-from userauth.permissions import IsAdmin, IsAdminOrReadOnly, IsManager, IsSalesperson
+from userauth.permissions import IsAdminOrReadOnly, IsSalesperson
 
 
 class SaleListCreate(generics.ListCreateAPIView):
@@ -29,13 +28,22 @@ class ReportViews(APIView):
             sold_products = []
             report = ''
             profit = 0
+            product_list = []
+            
             for sale in sales.all():
                 sold_products.append((sale.product, sale.price_sold))
 
             for i in sold_products:
-                report += f"{i[0].name} - bought for {i[0].price_bought} - sold for {i[1]} -  profit {i[1] - i[0].price_bought}  ||  "
+                product_info = {
+                    "name" : i[0].name,
+                    "bought for" : i[0].price_bought,
+                    "sold for" : i[1],
+                    "profit" : i[1] - i[0].price_bought
+                }
+                product_list.append(product_info)
                 profit += i[1] - i[0].price_bought
-            print(sold_products)
-            return Response({"message": f"{report}total profit = {profit}"})
+
+            return Response({"report": product_list,
+                             "total profit" : profit})
         else:
             return Response({"Error" : "Invalid data inputed!"})

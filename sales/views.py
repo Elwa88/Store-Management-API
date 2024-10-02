@@ -1,9 +1,9 @@
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .models import Sale, GenerateReport
+from .models import Sale
 from .serializers import SaleSerializer, ReportSerializer
-from userauth.permissions import IsAdminOrReadOnly, IsSalesperson
+from userauth.permissions import IsAdminOrReadOnly, IsSalesperson, IsManager
 
 
 class SaleListCreate(generics.ListCreateAPIView):
@@ -17,7 +17,7 @@ class SaleRetrieve(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAdminOrReadOnly]
 
 class ReportViews(APIView):
-
+    permission_classes = [IsManager]
     def post(self, request, *args, **kwargs):
 
         serializer = ReportSerializer(data = request.data)
@@ -26,10 +26,9 @@ class ReportViews(APIView):
             end_date = serializer.validated_data.get('end_date')
             sales = Sale.objects.filter(date_sold__range =(start_date, end_date))
             sold_products = []
-            report = ''
             profit = 0
             product_list = []
-            
+
             for sale in sales.all():
                 sold_products.append((sale.product, sale.price_sold))
 

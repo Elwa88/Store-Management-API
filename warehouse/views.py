@@ -61,6 +61,7 @@ class FeedbackRetrieve(generics.RetrieveUpdateDestroyAPIView):
 
 
 class Restock(APIView):
+    permission_classes = [IsAdmin]
     def get(self, request, category_name, stock_quantity, *args, **kwargs):
         category = Category.objects.get(name = category_name)
 

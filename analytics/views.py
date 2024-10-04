@@ -69,16 +69,63 @@ class PerformanceReport(APIView):
             match users_choice :
                 case "profit_rating":
                     return Response({
-                        "Message" : f"This is report generated about top/bottom 5 products by profit in different criterias in {start_date} - {end_date} timeframe",
+                        "Message" : f"This is report generated about top and bottom 5 products by profit in different criterias in {start_date} - {end_date} timeframe",
                         "Report" : self.rate_by_profit(sales)
                     })
+                case "turnover_rating":
+                    return Response({
+                        "Message" : f"This is report generated about top to bottom performing products by turnover in {start_date} - {end_date} timeframe",
+                        "Report" : self.rate_by_turnover(sales,start_date,end_date)
+                    })          
         else:
             return Response({"Error" : "Invalid Data!",
                              "valid data example " : {
                                  "time_period" : "choice in (monthly, quarterly, yearly)",
                                  "start_date" : "YYYY-MM-DD",
                              }})
+        
+    def rate_by_turnover(self,sales,start_date, end_date):
+
+        product_data ={}
+        for sale in sales:
+            time_to_sell = sale.date_sold - sale.product.buying_date
+            if sale.product.name in product_data:
+                product_data[sale.product.name]['total_time'] += time_to_sell
+                product_data[sale.product.name]['total_discount'] += sale.discount
+                product_data[sale.product.name]['sold_products_quantity'] += 1
+            else:
+                product_data[sale.product.name] = {
+                    "total_time" : time_to_sell,
+                    "total_discount" : sale.discount,
+                    'sold_products_quantity' : 1.0,
+                    'overal_grade' : 0
+                }
+        
+        for product_name , data in product_data.items():
+            sold_products_qty = Product.objects.filter(buying_date__range =(start_date, end_date), 
+                                                       name = product_name, 
+                                                       sold = True).count()
+            bought_products_qty = Product.objects.filter(buying_date__range=(start_date, end_date),
+                                                         name = product_name).count()
+            average_time = data['total_time'] / data['sold_products_quantity']
+            average_discount = float(data["total_discount"]) / data['sold_products_quantity']
+            turnover_ratio = (sold_products_qty / bought_products_qty) * 100
+            data['average_time'] = average_time 
+            data['average_discount'] = average_discount
+            data['turnover_ratio'] =  turnover_ratio 
+            data['overal_grade'] += ((-0.2*average_time.days) + (-0.3 * average_discount) + (0.5 * turnover_ratio))
+
+            return [{product_name : {
+                "quantity_sold" : data['sold_products_quantity'],
+                "average_time" : data['average_time'],
+                'average_discount' : f"{(data['average_discount'])}%",
+                "turnover_ratio" : float(f"{data['turnover_ratio']:.2f}"),
+                'overal_grade' : float(f"{data['overal_grade']:.2f}"),
+
+            }} for product_name, data in sorted(product_data.items(), key=lambda x: x[1]['overal_grade'], reverse=True)]
+
     def rate_by_profit(self, sales):
+
         product_data = {}
         for sale in sales:
             profit = sale.price_sold - sale.product.price_bought

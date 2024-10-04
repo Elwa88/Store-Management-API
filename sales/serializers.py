@@ -20,7 +20,7 @@ class SaleSerializer(serializers.ModelSerializer):
         sale = Sale.objects.create(**validated_data)
         product = validated_data['product']
         stock = Stock.objects.get(product_name = product.name)
-        discount = product.price_selling - sale.price_sold
+        discount = ((product.price_selling - sale.price_sold) / product.price_selling) * 100
         product.sold = True
         product.save()
         sale.discount = discount

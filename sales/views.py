@@ -10,6 +10,8 @@ class SaleListCreate(generics.ListCreateAPIView):
     queryset = Sale.objects.all()
     serializer_class = SaleSerializer
     permission_classes = [IsSalesperson]
+    def perform_create(self, serializer):
+        serializer.save(salesperson = self.request.user)
     filterset_class = SaleFilter
 
 class SaleRetrieve(generics.RetrieveUpdateDestroyAPIView):

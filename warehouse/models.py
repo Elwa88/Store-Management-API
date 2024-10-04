@@ -29,6 +29,7 @@ class Product(models.Model):
     price_selling = models.DecimalField(max_digits=10, decimal_places=2)
     serial_number = models.CharField(max_length=20, unique=True)
     item_code = models.CharField(max_length=5, unique=True)
+    sold = models.BooleanField(default=False)
     
     def __str__(self) -> str:
         return f'{self.category} - {self.name} - code : {self.item_code}'

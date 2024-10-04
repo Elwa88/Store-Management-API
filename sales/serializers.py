@@ -5,19 +5,14 @@ from warehouse.models import Stock
 class SaleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Sale
-        fields = ['id', 'product', 'date_sold', 'client_name', 'client_personal_no','price_sold','quantity_sold','discount']
-        read_only_fields = ['discount']
+        fields = ['id', 'product', 'date_sold', 'client_name', 'client_personal_no','price_sold','discount','salesperson']
+        read_only_fields = ['discount','salesperson']
 
     def validate(self, data):
-        quantity_sold = 1
-        try :
-            quantity_sold = data['quantity_sold']
-        except KeyError:
-            pass
         product = data['product']
         stock = Stock.objects.get(product_name = product.name)
-        if stock.quantity - quantity_sold < 0:
-            raise serializers.ValidationError(f"There is only {stock.quantity} {product.name} in stock!")
+        if stock.quantity - 1 < 0:
+            raise serializers.ValidationError(f"Item out of stock!")
         
         return data
 
@@ -26,9 +21,11 @@ class SaleSerializer(serializers.ModelSerializer):
         product = validated_data['product']
         stock = Stock.objects.get(product_name = product.name)
         discount = product.price_selling - sale.price_sold
+        product.sold = True
+        product.save()
         sale.discount = discount
         sale.save()
-        stock.quantity -= sale.quantity_sold
+        stock.quantity -= 1
         stock.save()
         
         return sale

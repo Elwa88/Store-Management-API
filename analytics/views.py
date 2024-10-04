@@ -81,15 +81,15 @@ class PerformanceReport(APIView):
     def rate_by_profit(self, sales):
         product_data = {}
         for sale in sales:
-            profit = (sale.quantity_sold * sale.price_sold) - (sale.quantity_sold * sale.product.price_bought)
+            profit = sale.price_sold - sale.product.price_bought
             product_name = sale.product.name
             if product_name in product_data:
                 product_data[product_name]['total_profit'] += profit
-                product_data[product_name]['units_sold'] += sale.quantity_sold
+                product_data[product_name]['units_sold'] += 1
             else:
                 product_data[product_name] = {
                     "total_profit" : profit,
-                    "units_sold" : sale.quantity_sold
+                    "units_sold" : 1
                 }
 
         for product_name, data in product_data.items():

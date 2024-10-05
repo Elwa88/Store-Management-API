@@ -76,14 +76,18 @@ class PerformanceReport(APIView):
                     return Response({
                         "Message" : f"This is report generated about top to bottom performing products by turnover in {start_date} - {end_date} timeframe",
                         "Report" : self.rate_by_turnover(sales,start_date,end_date)
-                    })          
+                    })
+                case "salesmen":
+                    return Response({
+                        "Message" : f"This is top to bottom performing salespeople {start_date} - {end_date} timeframe",
+                        "Report" : self.rete_salespeople(sales)})
         else:
             return Response({"Error" : "Invalid Data!",
                              "valid data example " : {
                                  "time_period" : "choice in (monthly, quarterly, yearly)",
                                  "start_date" : "YYYY-MM-DD",
                              }})
-        
+    
     def rate_by_turnover(self,sales,start_date, end_date):
 
         product_data ={}
@@ -160,6 +164,24 @@ class PerformanceReport(APIView):
             "Least Profit Per Unit" : least_profit_per_unit,
         }
 
+    def rete_salespeople(self,sales):
+        salesmen_data ={}
+        for sale in sales:
+            salesman_name = sale.salesperson.first_name + sale.salesperson.last_name
+            if salesman_name in salesmen_data:
+                salesmen_data[salesman_name]['quantity_sold'] += 1
+                salesmen_data[salesman_name]['total_profit_generated'] += sale.price_sold
+            else:
+                salesmen_data[salesman_name] = {
+                    "quantity_sold" : 1,
+                    "total_profit_generated" : sale.price_sold
+                }
+        for _, data in salesmen_data.items():
+            data['profit_per_sale'] = data['total_profit_generated'] / data['quantity_sold']
+
+        return sorted(salesmen_data.items(), key=lambda x: x[1]['total_profit_generated'], reverse=True)
+    
+    
 def get_end_date(start_date, time_period):
 
     match time_period:

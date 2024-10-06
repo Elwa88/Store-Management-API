@@ -1,7 +1,5 @@
-from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .models import GeneralAnalytics
 from warehouse.models import Product
 from sales.models import Sale
 from .serializers import AnalyticsSerializer
@@ -181,7 +179,7 @@ class PerformanceReport(APIView):
 
         return sorted(salesmen_data.items(), key=lambda x: x[1]['total_profit_generated'], reverse=True)
     
-    
+
 def get_end_date(start_date, time_period):
 
     match time_period:
